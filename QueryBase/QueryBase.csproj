@@ -4,7 +4,27 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Title>QueryBase</Title>
+    <Authors>MertBaykar</Authors>
+    <Company> </Company>
+    <Description>This library provides a powerful generic repository base, leveraging the capabilities of Entity Framework and QueryMapper. It simplifies CRUD operations, making them easily extendable. Pagination, filtering, ordering, and bulk operations are all implemented in a generic and flexible way. Most methods can be overridden for customization.</Description>
+    <PackageProjectUrl>https://github.com/Mertbaykar/QueryBase</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/Mertbaykar/QueryBase</RepositoryUrl>
+    <PackageTags>QueryBase;EntityFramework;RepositoryPattern;GenericRepository;CRUD;Pagination;Filtering;Ordering;BulkOperations;QueryMapper;EFCore;ORM;DataAccess;CSharp;.NET</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="EFQueryMapper" Version="1.0.5" />

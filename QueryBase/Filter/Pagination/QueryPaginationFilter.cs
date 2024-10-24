@@ -4,6 +4,6 @@ namespace QueryBase.Filter
 {
     public class QueryPaginationFilter<TFilter> : QueryFilter<TFilter> where TFilter : class
     {
-        public QueryPagination Pagination { get; set; }
+        public required QueryPagination Pagination { get; set; }
     }
 }
