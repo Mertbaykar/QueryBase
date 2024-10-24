@@ -1,0 +1,6 @@
+@QueryBase.Examples.API_HostAddress = http://localhost:5034
+
+GET {{QueryBase.Examples.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
