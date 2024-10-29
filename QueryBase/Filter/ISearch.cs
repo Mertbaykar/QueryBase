@@ -1,7 +1,7 @@
 ﻿
 namespace QueryBase.Filter
 {
-    public interface IQuerySearch
+    public interface ISearch
     {
         string? Search { get; set; }
     }

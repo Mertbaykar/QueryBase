@@ -4,7 +4,7 @@ using QueryBase.Filter;
 
 namespace QueryBase.Examples.Core
 {
-    public class PaginateBookFilter : IQuerySearch
+    public class PaginateBookFilter : ISearch
     {
         public string? Name { get; set; }
         public string? Summary { get; set; }

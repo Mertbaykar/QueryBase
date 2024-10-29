@@ -41,7 +41,7 @@ namespace QueryBase
             return await BuildQuery<TEntity, TDto>(predicate).FirstOrDefaultAsync();
         }
 
-        public virtual async Task<TDto?> ReadById<TEntity, TDto, TKey>(TKey id) where TEntity : class, IQueryKey<TKey> where TDto : class
+        public virtual async Task<TDto?> ReadById<TEntity, TDto, TKey>(TKey id) where TEntity : class, IEntityKey<TKey> where TDto : class
         {
             return await ReadSingle<TEntity, TDto>(x => x.Id!.Equals(id));
         }
@@ -60,7 +60,7 @@ namespace QueryBase
             return await BuildQuery<TEntity, TDto>(predicate, queryOrders).ToListAsync();
         }
 
-        public virtual async Task<IEnumerable<TDto>> ReadFilteredPaginate<TEntity, TDto, TFilter>(QueryPaginationFilter<TFilter> paginationFilter, Expression<Func<TDto, bool>>? or = null, Expression<Func<TDto, bool>>? and = null) where TEntity : class where TDto : class where TFilter : class
+        public virtual async Task<IEnumerable<TDto>> ReadFilteredPaginate<TEntity, TDto, TFilter>(PaginationQueryFilter<TFilter> paginationFilter, Expression<Func<TDto, bool>>? or = null, Expression<Func<TDto, bool>>? and = null) where TEntity : class where TDto : class where TFilter : class
         {
             return await BuildFilteredQuery<TEntity, TDto, TFilter>(paginationFilter, or, and)
                 .Skip((paginationFilter.Pagination.Page - 1) * paginationFilter.Pagination.Size)
@@ -102,7 +102,7 @@ namespace QueryBase
 
             #region Search filter
 
-            if (filter is IQuerySearch filterSearchable && !string.IsNullOrWhiteSpace(filterSearchable.Search))
+            if (filter is ISearch filterSearchable && !string.IsNullOrWhiteSpace(filterSearchable.Search))
             {
                 foreach (var dtoProp in typeof(TDto).GetProperties().Where(x => x.CanRead))
                 {
@@ -168,7 +168,7 @@ namespace QueryBase
             // prop filtering via name matching
             foreach (var filterProp in typeof(TFilter).GetProperties().Where(x => x.CanRead))
             {
-                if (filterProp.Name == nameof(IQuerySearch.Search))
+                if (filterProp.Name == nameof(ISearch.Search))
                     continue;
                 if (IsSameType(filterProp.PropertyType, typeof(DateTime)))
                     continue;
@@ -346,7 +346,7 @@ namespace QueryBase
             return collection;
         }
 
-        public virtual async Task<TEntity> Update<TEntity, TRequest, TKey>(TRequest request, bool save = true, Expression<Func<IQueryable<TEntity>, IQueryable<TEntity>>>? includes = null) where TEntity : class, IQueryKey<TKey> where TRequest : class, IQueryKey<TKey>
+        public virtual async Task<TEntity> Update<TEntity, TRequest, TKey>(TRequest request, bool save = true, Expression<Func<IQueryable<TEntity>, IQueryable<TEntity>>>? includes = null) where TEntity : class, IEntityKey<TKey> where TRequest : class, IEntityKey<TKey>
         {
             IQueryable<TEntity> query = context.Set<TEntity>().Where(x => x.Id!.Equals(request.Id));
 
@@ -357,6 +357,25 @@ namespace QueryBase
             var existingEntity = await query.SingleOrDefaultAsync();
             if (existingEntity == null)
                 throw new InvalidOperationException($"{typeof(TEntity)} entity with {request.Id} id not found.");
+
+            context.Entry(existingEntity).CurrentValues.SetValues(request);
+
+            if (save)
+                await Save();
+            return existingEntity;
+        }
+
+        public virtual async Task<TEntity> Update<TEntity, TRequest, TKey>(TRequest request, TKey id, bool save = true, Expression<Func<IQueryable<TEntity>, IQueryable<TEntity>>>? includes = null) where TEntity : class, IEntityKey<TKey> where TRequest : class
+        {
+            IQueryable<TEntity> query = context.Set<TEntity>().Where(x => x.Id!.Equals(id));
+
+            // Apply includes if provided
+            if (includes != null)
+                query = ApplyIncludes(query, includes);
+
+            var existingEntity = await query.SingleOrDefaultAsync();
+            if (existingEntity == null)
+                throw new InvalidOperationException($"{typeof(TEntity)} entity with {id} id not found.");
 
             context.Entry(existingEntity).CurrentValues.SetValues(request);
 
@@ -400,14 +419,14 @@ namespace QueryBase
                 await Save();
         }
 
-        public virtual async Task SoftDelete<TEntity>(TEntity entity, bool save = true) where TEntity : class, IQueryStatus
+        public virtual async Task SoftDelete<TEntity>(TEntity entity, bool save = true) where TEntity : class, IEntityStatus
         {
             entity.DeActivate();
             if (save)
                 await Save();
         }
 
-        public virtual async Task SoftDelete<TEntity, TKey>(TKey id, bool save = true) where TEntity : class, IQueryEntity<TKey>
+        public virtual async Task SoftDelete<TEntity, TKey>(TKey id, bool save = true) where TEntity : class, IEntity<TKey>
         {
             var entity = context.Set<TEntity>().Find(id);
             if (entity == null)
@@ -420,7 +439,7 @@ namespace QueryBase
             await context.Set<TEntity>().Where(predicate).ExecuteDeleteAsync();
         }
 
-        public virtual async Task BulkSoftDelete<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class, IQueryStatus
+        public virtual async Task BulkSoftDelete<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class, IEntityStatus
         {
             await BulkUpdate(predicate, x => x.Update(y => y.IsActive, false));
         }

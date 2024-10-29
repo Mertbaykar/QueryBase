@@ -2,7 +2,7 @@
 
 namespace QueryBase
 {
-    public interface IQueryKey<TKey>
+    public interface IEntityKey<TKey>
     {
         TKey Id { get; }
     }

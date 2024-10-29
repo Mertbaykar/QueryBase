@@ -2,7 +2,7 @@
 
 namespace QueryBase
 {
-    public interface IQueryStatus
+    public interface IEntityStatus
     {
         /// <summary>
         /// has no setter for allowing use of nonpublic setter

@@ -1,7 +1,7 @@
 ﻿
 namespace QueryBase.Examples.Core
 {
-    public class UpdateBookRequest : IQueryKey<int>
+    public class UpdateBookRequest : IEntityKey<int>
     {
 
         public int Id { get; set; }

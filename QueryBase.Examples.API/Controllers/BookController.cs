@@ -34,7 +34,7 @@ namespace QueryBase.Examples.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Paginate(QueryPaginationFilter<PaginateBookFilter> paginationFilter)
+        public async Task<IActionResult> Paginate(PaginationQueryFilter<PaginateBookFilter> paginationFilter)
         {
             var result = await BookRepository.ReadFilteredPaginate<Book, ReadBookResponse, PaginateBookFilter>(paginationFilter);
             return Ok(result);
