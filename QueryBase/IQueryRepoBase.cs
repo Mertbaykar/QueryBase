@@ -68,7 +68,7 @@ namespace QueryBase
         /// <remarks>If all needed is to update properties with basic types (string, int, bool etc.). You could just leave <paramref name="save"/> as true. If there is more action needed with the entity, ensure <paramref name="save"/> is false. Then you could retrieve entity with basic properties updated and then proceed. Also <paramref name="includes"/> could be used if operations needed with related entities after the basic property updates.</remarks>
         /// <returns></returns>
         Task<TEntity> Update<TEntity, TRequest, TKey>(TRequest request, TKey id, bool save = true, Expression<Func<IQueryable<TEntity>, IQueryable<TEntity>>>? includes = null) where TEntity : class, IEntityKey<TKey> where TRequest : class;
-        public Task BulkUpdate<TEntity>(Expression<Func<TEntity, bool>> predicate, Action<QueryBulkUpdater<TEntity>> bulkUpdateAction) where TEntity : class;
+        Task BulkUpdate<TEntity>(Expression<Func<TEntity, bool>> predicate, Action<QueryBulkUpdater<TEntity>> bulkUpdateAction) where TEntity : class;
         Task Delete<TEntity>(TEntity entity, bool save = true) where TEntity : class;
         Task SoftDelete<TEntity>(TEntity entity, bool save) where TEntity : class, IEntityStatus;
         Task SoftDelete<TEntity, TKey>(TKey id, bool save = true) where TEntity : class, IEntity<TKey>;

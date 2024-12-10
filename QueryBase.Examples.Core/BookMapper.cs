@@ -1,12 +1,14 @@
 ﻿
+using QueryMapper;
+
 namespace QueryBase.Examples.Core
 {
     public class BookMapper : QueryMapper.QueryMapper
     {
-        public BookMapper()
+
+        protected override void Configure(ConfigurationBuilder builder)
         {
-            
-            Configure<Book, ReadBookResponse>(config =>
+           builder.Configure<Book, ReadBookResponse>(config =>
             {
                 config
                 .Match(x => x.Author.FirstName + " " + x.Author.LastName, y => y.AuthorName)
@@ -14,7 +16,7 @@ namespace QueryBase.Examples.Core
                 ;
             });
 
-            Configure<Note, ReadNoteResponse>(config =>
+            builder.Configure<Note, ReadNoteResponse>(config =>
             {
                 config
                 .Match(x => x.User.FirstName + " " + x.User.LastName, y => y.UserName)
